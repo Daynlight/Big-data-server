@@ -1,0 +1,86 @@
+# Copyright (c) 2026 Daniel Stodulski
+# SPDX-License-Identifier: MIT
+# See the LICENSE file in the project root for license information.
+
+
+
+# [!REQUIRED][set secret CI_CD_URL with your endpoint]
+# [!REQUIRED][set secret PRIVATE_KEY with your signature private key]
+# [!REQUIRED][set your production branch]
+# [!OPTIONAL][Set your others workflows]
+
+
+
+permissions:
+  contents: read
+
+
+
+name: CI-CD-API
+on:
+  push:
+    branches:
+      - production # [!REQUIRED][set your production branch]
+  
+  workflow_dispatch:
+
+  ### --------------------
+  ### - Specify workflows that have to run and end with success before 
+  ### - sending request, also uncomment lines
+  ### - for example: Tests
+  ### --------------------
+  # workflow_run:
+  # types: ["Tests"] # [Set your others workflows]
+  #   - completed
+
+
+
+jobs:
+  ci-cd-api:
+    environment: production
+    
+    if: ${{ github.event_name != 'workflow_run' || 
+            github.event.workflow_run.conclusion == 'success' }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up private key
+        run: |
+          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" > private.pem
+          chmod 600 private.pem
+
+      - name: Generate timestamp and canonical string
+        id: generate
+        run: |
+          TIMESTAMP=$(date +%s)
+          CANONICAL="${TIMESTAMP}"
+          echo "CANONICAL=$CANONICAL" >> $GITHUB_ENV
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+
+      - name: Sign request
+        id: sign
+        run: |
+          SIGNATURE=$(printf "%s" "$CANONICAL" \
+            | openssl dgst -sha256 -sign private.pem \
+            | base64 -w 0)
+          echo "SIGNATURE=$SIGNATURE" >> $GITHUB_ENV  
+
+      - name: Send request
+        run: |
+          curl -sS -f \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --retry 3 \
+            --retry-delay 5 \
+            -H "X-Username: ${{ github.repository_owner }}" \
+            -H "X-Repo: ${{ github.event.repository.name }}" \
+            -H "X-Body: $TIMESTAMP" \
+            -H "X-Sig-body: $SIGNATURE" \
+            "${{ secrets.CI_CD_URL }}/api/service/"
+
+      - name: Cleanup private key
+        if: always()
+        run: rm -rf private.pem
