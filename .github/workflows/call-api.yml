@@ -8,9 +8,8 @@ on:
 env:
   USERNAME: Daynlight
   REPO: Big-data-server
-  URL: https://tin-s498831.vm.wmi.amu.edu.pl:3000/api/service/
+  URL: api.wrapzilla.pl/api/service/
   METHOD: GET
-  BODY_HASH: "-"
 
 jobs:
   call-api:
@@ -28,7 +27,7 @@ jobs:
         id: generate
         run: |
           TIMESTAMP=$(date +%s)
-          CANONICAL="${METHOD}\n${TIMESTAMP}\n${BODY_HASH}"
+          CANONICAL="${METHOD}\n${TIMESTAMP}\n-"
           echo "CANONICAL=$CANONICAL" >> $GITHUB_ENV
           echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
 
