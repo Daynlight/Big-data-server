@@ -1,0 +1,50 @@
+name: Call Custom API
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  USERNAME: Daynlight
+  REPO: Big-data-server
+  URL: https://tin-s498831.vm.wmi.amu.edu.pl:3000/api/service/
+  METHOD: GET
+  BODY_HASH: "-"
+
+jobs:
+  call-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up private key
+        run: |
+          echo "${{ secrets.PRIVATE_KEY }}" > private.pem
+          chmod 600 private.pem
+
+      - name: Generate timestamp and canonical string
+        id: generate
+        run: |
+          TIMESTAMP=$(date +%s)
+          CANONICAL="${METHOD}\n${TIMESTAMP}\n${BODY_HASH}"
+          echo "CANONICAL=$CANONICAL" >> $GITHUB_ENV
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+
+      - name: Sign request
+        id: sign
+        run: |
+          SIGNATURE=$(printf "$CANONICAL" \
+            | openssl dgst -sha256 -sign private.pem \
+            | base64 -w 0)
+          echo "SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
+
+      - name: Send request
+        run: |
+          curl -v -k \
+            -H "X-Username: $USERNAME" \
+            -H "X-Repo: $REPO" \
+            -H "X-Body: $TIMESTAMP" \
+            -H "X-Sig-body: $SIGNATURE" \
+            "$URL"
