@@ -9,7 +9,7 @@ name: CI-CD-API
 
 
 env:
-  URL: api.wrapzilla.pl/api/service/ # [!REQUIRED][set endpoint for api]
+  URL: laptop.daynlight.pl/api/service/ # [!REQUIRED][set endpoint for api]
 # [!REQUIRED][set secret PRIVATE_KEY with your signature private key]
 
 
