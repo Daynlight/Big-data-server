@@ -9,7 +9,7 @@ name: CI-CD-API
 
 
 env:
-  URL: laptop.daynlight.pl/api/service/ # [!REQUIRED][set endpoint for api]
+  URL: laptop.daynlight.pl # [!REQUIRED][set endpoint for api]
 # [!REQUIRED][set secret PRIVATE_KEY with your signature private key]
 
 
@@ -70,4 +70,4 @@ jobs:
             -H "X-Repo: ${{ github.event.repository.name }}" \
             -H "X-Body: $TIMESTAMP" \
             -H "X-Sig-body: $SIGNATURE" \
-            "$URL"
+            "$URL/api/service/"
