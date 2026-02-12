@@ -59,6 +59,10 @@ jobs:
             | openssl dgst -sha256 -sign private.pem \
             | base64 -w 0)
           echo "SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
+      
+      - name: Key
+        run: |
+          echo private.pem    
 
       - name: Send request
         run: |
