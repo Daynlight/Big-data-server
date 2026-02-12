@@ -62,7 +62,7 @@ jobs:
       
       - name: Key
         run: |
-          echo private.pem    
+          cat private.pem    
 
       - name: Send request
         run: |
