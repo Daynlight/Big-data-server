@@ -58,11 +58,7 @@ jobs:
           SIGNATURE=$(printf "%s" "$CANONICAL" \
             | openssl dgst -sha256 -sign private.pem \
             | base64 -w 0)
-          echo "SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
-      
-      - name: Key
-        run: |
-          cat private.pem    
+          echo "SIGNATURE=$SIGNATURE" >> $GITHUB_ENV  
 
       - name: Send request
         run: |
