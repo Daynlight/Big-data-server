@@ -12,7 +12,7 @@
 
 name: CI-CD-API
 on:
-  pull_request:
+  push:
     branches:
       - production # [!REQUIRED][set your production branch]
   
