@@ -12,9 +12,9 @@
 
 name: CI-CD-API
 on:
-  push:
+  pull_request:
     branches:
-      - main # [!REQUIRED][set your production branch]
+      - production # [!REQUIRED][set your production branch]
   
   workflow_dispatch:
 
