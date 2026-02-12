@@ -14,7 +14,7 @@ name: CI-CD-API
 on:
   push:
     branches:
-      - main # [!REQUIRED][set your production branch]
+      - production # [!REQUIRED][set your production branch]
   
   workflow_dispatch:
 
@@ -31,6 +31,8 @@ on:
 
 jobs:
   ci-cd-api:
+    environment: production
+    
     if: ${{ github.event_name != 'workflow_run' || 
             github.event.workflow_run.conclusion == 'success' }}
 
