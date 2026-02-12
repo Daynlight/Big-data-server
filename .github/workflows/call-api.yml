@@ -43,7 +43,7 @@ jobs:
 
       - name: Set up private key
         run: |
-          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" > private.pem
+          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" | tr '\\n' '\n' > private.pem
           chmod 600 private.pem
 
       - name: Generate timestamp and canonical string
