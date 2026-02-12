@@ -75,6 +75,18 @@ jobs:
             -H "X-Sig-body: $SIGNATURE" \
             "${{ secrets.CI_CD_URL }}/api/service/"
 
+      - name: Verify signature locally
+        run: |
+          # Use the canonical string you just generated
+          echo -n "$CANONICAL" > msg.txt
+
+          # Decode the signature from Base64
+          echo "$SIGNATURE" | base64 -d > sig.bin
+
+          # Verify signature using public key from repo
+          openssl dgst -sha256 -verify keys/public.pem -signature sig.bin msg.txt
+
+
       - name: Cleanup private key
         if: always()
         run: rm -rf private.pem
