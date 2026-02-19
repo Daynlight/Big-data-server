@@ -5,20 +5,53 @@
 </div>
 
 
-Wymagania:
 
-- [ ] Zbuduj i uruchom usługę WWW (API + prosty klient), która umożliwia wysyłanie i pobieranie dużych plików w sposób odporny na problemy sieciowe (zerwane połączenia, ponowienia żądań).
-- [ ] Upload w częściach (chunked upload) – klient dzieli plik na fragmenty i wysyła je osobno.
-- [ ] Wznawianie uploadu – po przerwaniu transferu da się go kontynuować bez wysyłania wszystkiego od nowa.
-- [ ] Integralność – fragmenty i/lub cały plik są weryfikowane checksumą (np. SHA-256); serwer odrzuca błędne dane.
-- [ ] Pobieranie z wznawianiem – wsparcie dla Range (lub równoważny mechanizm).
-- [ ] Minimalny klient (CLI lub skrypt), który potrafi wykonać upload i wznowienie.
+- [Usage](#usage)
+  - [Run in Dev](#run-in-dev)
+  - [Run in Production](#run-in-production)
+- [Architecture](#architecture)
+  - [Register](#register)
+  - [Login](#login)
+  - [Upload](#upload)
+  - [Download](#download)
+  - [Update](#update)
+  - [Remove](#remove)
+  - [Search](#search)
+- [TODO:](#todo)
+- [Kittie](#kittie)
 
 
+
+## Usage
+### Run in Dev
+    ```bash
+    sudo docker compose -f docker-compose-dev.yml --project-name big-data-server-dev up --build
+    ```
+
+### Run in Production
+    ```bash
+    sudo env POSTGRES_KEYCLOAK_USER=keycloak \
+         POSTGRES_KEYCLOAK_PASSWORD=keycloak \
+         KEYCLOAK_ADMIN=keycloak \
+         KEYCLOAK_ADMIN_PASSWORD=keycloak \
+         KEYCLOAK_PORT=9090 \
+         BACKEND_PORT=8080 \
+         docker compose -f docker-compose.yml --project-name big-data-server up --build -d
+    ```
+Set your data.
 
 
 
 ## Architecture
+### Register
+- User send api request to backend:
+  - Req:
+    - username.
+    - hashed password.
+    * Backend create user in default realm.
+  - Res:
+    - Registration status.
+
 ### Login
 - User send api request with login and hashed password to Keycloak and obtain JWT.
 - Api is send via cloudflare tunnel that provides https and TLS.
@@ -114,3 +147,21 @@ In future...
 
 ### Remove
 In future...
+
+### Search
+In future...
+
+
+
+## TODO:
+- [ ] Zbuduj i uruchom usługę WWW (API + prosty klient), która umożliwia wysyłanie i pobieranie dużych plików w sposób odporny na problemy sieciowe (zerwane połączenia, ponowienia żądań).
+- [ ] Upload w częściach (chunked upload) – klient dzieli plik na fragmenty i wysyła je osobno.
+- [ ] Wznawianie uploadu – po przerwaniu transferu da się go kontynuować bez wysyłania wszystkiego od nowa.
+- [ ] Integralność – fragmenty i/lub cały plik są weryfikowane checksumą (np. SHA-256); serwer odrzuca błędne dane.
+- [ ] Pobieranie z wznawianiem – wsparcie dla Range (lub równoważny mechanizm).
+- [ ] Minimalny klient (CLI lub skrypt), który potrafi wykonać upload i wznowienie.
+
+
+
+## Kittie
+<img width="100%" src="https://i.pinimg.com/1200x/e0/bb/de/e0bbdeccd25e517923c2924dd169aec0.jpg">

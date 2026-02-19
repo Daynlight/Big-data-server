@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER:?Missing env POSTGRES_KEYCLOAK_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD:?Missing env POSTGRES_KEYCLOAK_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    restart: unless-stopped
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER:?Missing env POSTGRES_KEYCLOAK_USER}
+      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD:?Missing env POSTGRES_KEYCLOAK_PASSWORD}
+
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:?Missing env KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Missing env KEYCLOAK_ADMIN_PASSWORD}
+    ports:
+      - "${KEYCLOAK_PORT:?Missing env KEYCLOAK_PORT}:8080"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  backend:
+    build:
+      context: ./server
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: Users
+    ports:
+      - "${BACKEND_PORT:?Missing env BACKEND_PORT}:3000"
+    depends_on:
+      - keycloak
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
