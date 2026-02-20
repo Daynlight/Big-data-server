@@ -11,6 +11,6 @@ RUN npm run build
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=80
 
-CMD ["npx", "vite", "preview", "--port", "3000", "--host"]
+CMD ["npx", "vite", "preview", "--port", "80", "--host"]
