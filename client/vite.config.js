@@ -19,5 +19,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 80
+  },
+
+  preview: {
+    host: '0.0.0.0',
+    port: 80,
+    allowedHosts: ['big-data-server.daynlight.pl', 'localhost', '127.0.0.1']
   }
 })
