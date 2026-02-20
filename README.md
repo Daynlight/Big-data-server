@@ -27,6 +27,10 @@
     ```bash
     sudo docker compose -f docker-compose-dev.yml --project-name big-data-server-dev up --build
     ```
+- frontend port: 10000
+- backend port: 18080
+- keycloak port: 19090
+- postgresql port: 15432
 
 ### Run in Production
     ```bash
@@ -34,11 +38,19 @@
          POSTGRES_KEYCLOAK_PASSWORD=keycloak \
          KEYCLOAK_ADMIN=keycloak \
          KEYCLOAK_ADMIN_PASSWORD=keycloak \
+         KEYCLOAK_URL="http://localhost:9090" \
          KEYCLOAK_PORT=9090 \
+         BACKEND_URL="http://localhost:8080" \
          BACKEND_PORT=8080 \
+         FRONTEND_PORT=80 \
          docker compose -f docker-compose.yml --project-name big-data-server up --build -d
     ```
-Set your data.
+- frontend port: FRONTEND_PORT
+- backend port: BACKEND_PORT
+- backend url: BACKEND_URL
+- keycloak url: KEYCLOAK_URL
+- keycloak port: KEYCLOAK_PORT
+- postgresql port: NONE
 
 
 
