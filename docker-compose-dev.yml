@@ -6,10 +6,12 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
+    ports:
+      - "15432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data-dev
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - backend
+      - keycloak
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
@@ -29,7 +31,14 @@ services:
     depends_on:
       - postgres
     networks:
-      - backend
+      - keycloak
+
+
+
+
+
+
+
 
   backend:
     build:
@@ -38,19 +47,50 @@ services:
     restart: unless-stopped
     environment:
       PORT: 3000
-      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_URL: http://localhost:19090
       KEYCLOAK_REALM: Users
     ports:
       - "18080:3000"
-    depends_on:
-      - keycloak
     networks:
       - backend
     volumes:
       - ./server:/server
 
+
+
+
+
+
+
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      PORT: 80
+      KEYCLOAK_URL: http://localhost:19090
+      KEYCLOAK_REALM: Users
+      BACKEND_URL: http://localhost:18080
+    ports:
+      - "10000:80"
+    networks:
+      - frontend
+    volumes:
+      - ./client:/client
+
+
+
+
+
+
+
+
 volumes:
   postgres_data:
 
 networks:
+  keycloak:
   backend:
+  frontend:

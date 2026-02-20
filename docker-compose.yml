@@ -9,7 +9,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - backend
+      - keycloak
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
@@ -21,7 +21,6 @@ services:
       KC_DB_URL_DATABASE: keycloak
       KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER:?Missing env POSTGRES_KEYCLOAK_USER}
       KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD:?Missing env POSTGRES_KEYCLOAK_PASSWORD}
-
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:?Missing env KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Missing env KEYCLOAK_ADMIN_PASSWORD}
     ports:
@@ -29,7 +28,14 @@ services:
     depends_on:
       - postgres
     networks:
-      - backend
+      - keycloak
+
+
+
+
+
+
+
 
   backend:
     build:
@@ -37,17 +43,45 @@ services:
     restart: unless-stopped
     environment:
       PORT: 3000
-      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_URL: ${KEYCLOAK_URL:?Missing env KEYCLOAK_URL}
       KEYCLOAK_REALM: Users
     ports:
       - "${BACKEND_PORT:?Missing env BACKEND_PORT}:3000"
-    depends_on:
-      - keycloak
     networks:
       - backend
+
+
+
+
+
+
+
+
+  frontend:
+    build:
+      context: ./client
+    restart: unless-stopped
+    environment:
+      PORT: 80
+      KEYCLOAK_URL: ${KEYCLOAK_URL:?Missing env KEYCLOAK_URL}
+      KEYCLOAK_REALM: Users
+      BACKEND_URL: ${BACKEND_URL:?Missing env BACKEND_URL}
+    ports:
+      - "${FRONTEND_PORT:?Missing env FRONTEND_PORT}:80"
+    networks:
+      - frontend
+
+
+
+
+
+
+
 
 volumes:
   postgres_data:
 
 networks:
+  keycloak:
   backend:
+  frontend:
