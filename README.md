@@ -30,7 +30,8 @@
 - frontend port: 10000
 - backend port: 18080
 - keycloak port: 19090
-- postgresql port: 15432
+- postgresql keycloak port: 15432
+- postgresql backend port: 15433
 
 ### Run in Production
     ```bash
@@ -38,6 +39,8 @@
          POSTGRES_KEYCLOAK_PASSWORD=keycloak \
          KEYCLOAK_ADMIN=keycloak \
          KEYCLOAK_ADMIN_PASSWORD=keycloak \
+         POSTGRES_BACKEND_USER=admin \
+         POSTGRES_BACKEND_PASSWORD=admin \
          KEYCLOAK_URL="http://localhost:9090" \
          KEYCLOAK_PORT=9090 \
          BACKEND_URL="http://localhost:8080" \
