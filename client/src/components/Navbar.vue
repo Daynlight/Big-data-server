@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import keycloak from "../keycloak"
+import keycloak from "../scripts/keycloak"
 const username = computed(() => keycloak.state.username)
 </script>
 
