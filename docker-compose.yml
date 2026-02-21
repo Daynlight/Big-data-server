@@ -30,6 +30,7 @@ services:
       
       KC_HOSTNAME: ${KEYCLOAK_URL:?Missing env KEYCLOAK_URL}
       KC_PROXY: edge
+      KC_HTTP_ENABLED: true
       KC_HOSTNAME_STRICT: false
     ports:
       - "${KEYCLOAK_PORT:?Missing env KEYCLOAK_PORT}:8080"
