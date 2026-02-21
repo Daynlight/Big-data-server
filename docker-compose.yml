@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER:?Missing env POSTGRES_KEYCLOAK_USER}
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD:?Missing env POSTGRES_KEYCLOAK_PASSWORD}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "$POSTGRES_KEYCLOAK_USER"]
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_KEYCLOAK_USER", "-d", "keycloak"]
       interval: 5s
       retries: 5
     volumes:
@@ -51,7 +51,7 @@ services:
       POSTGRES_USER: ${POSTGRES_BACKEND_USER:?Missing env POSTGRES_BACKEND_USER}
       POSTGRES_PASSWORD: ${POSTGRES_BACKEND_PASSWORD:?Missing env POSTGRES_BACKEND_PASSWORD}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "$POSTGRES_BACKEND_USER"]
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_BACKEND_USER", "-d", "big-data-server"]
       interval: 5s
       retries: 5
     volumes:

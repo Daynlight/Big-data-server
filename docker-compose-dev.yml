@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", keycloak"]
+      test: ["CMD", "pg_isready", "-U", "keycloak", "-d", "keycloak"]
       interval: 5s
       retries: 5
     ports:
@@ -53,7 +53,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "admin"]
+      test: ["CMD", "pg_isready", "-U", "admin", "-d", "big-data-server"]
       interval: 5s
       retries: 5
     ports:
