@@ -9,7 +9,7 @@ const username = computed(() => keycloak.state.username)
     <div class="container">
 
       <router-link v-if="username" class="navbar-brand" to="/">
-        Hello: {{ username }}
+        Hello {{ username }}
       </router-link>
       <router-link v-if="!username" class="navbar-brand" to="/">
         Big data server
