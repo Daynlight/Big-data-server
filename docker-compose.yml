@@ -1,23 +1,28 @@
 services:
-  postgres:
+  keycloak-postgres:
     image: postgres:15
     restart: unless-stopped
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER:?Missing env POSTGRES_KEYCLOAK_USER}
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD:?Missing env POSTGRES_KEYCLOAK_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_KEYCLOAK_USER", "-d", "keycloak"]
+      interval: 5s
+      retries: 5
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - keycloak_postgres_data:/var/lib/postgresql/data
     networks:
       - keycloak
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
     restart: unless-stopped
-    command: start-dev
+    command: start
     environment:
+      KC_PROXY: edge
       KC_DB: postgres
-      KC_DB_URL_HOST: postgres
+      KC_DB_URL_HOST: keycloak-postgres
       KC_DB_URL_DATABASE: keycloak
       KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER:?Missing env POSTGRES_KEYCLOAK_USER}
       KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD:?Missing env POSTGRES_KEYCLOAK_PASSWORD}
@@ -26,7 +31,8 @@ services:
     ports:
       - "${KEYCLOAK_PORT:?Missing env KEYCLOAK_PORT}:8080"
     depends_on:
-      - postgres
+      keycloak-postgres:
+        condition: service_healthy
     networks:
       - keycloak
 
@@ -37,6 +43,22 @@ services:
 
 
 
+  backend-postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: big-data-server
+      POSTGRES_USER: ${POSTGRES_BACKEND_USER:?Missing env POSTGRES_BACKEND_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_BACKEND_PASSWORD:?Missing env POSTGRES_BACKEND_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_BACKEND_USER", "-d", "big-data-server"]
+      interval: 5s
+      retries: 5
+    volumes:
+      - backend_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
   backend:
     build:
       context: ./server
@@ -44,9 +66,16 @@ services:
     environment:
       PORT: 3000
       KEYCLOAK_URL: ${KEYCLOAK_URL:?Missing env KEYCLOAK_URL}
-      KEYCLOAK_REALM: Users
+      KEYCLOAK_REALM: Big-data-server-users
+      POSTGRES_BACKEND_DB: big-data-server
+      POSTGRES_BACKEND_HOST: backend-postgres
+      POSTGRES_BACKEND_USER: ${POSTGRES_BACKEND_USER:?Missing env POSTGRES_BACKEND_USER}
+      POSTGRES_BACKEND_PASSWORD: ${POSTGRES_BACKEND_PASSWORD:?Missing env POSTGRES_BACKEND_PASSWORD}
     ports:
       - "${BACKEND_PORT:?Missing env BACKEND_PORT}:3000"
+    depends_on:
+      backend-postgres:
+        condition: service_healthy
     networks:
       - backend
 
@@ -63,9 +92,9 @@ services:
     restart: unless-stopped
     environment:
       PORT: 80
-      KEYCLOAK_URL: ${KEYCLOAK_URL:?Missing env KEYCLOAK_URL}
-      KEYCLOAK_REALM: Users
-      BACKEND_URL: ${BACKEND_URL:?Missing env BACKEND_URL}
+      VITE_KEYCLOAK_URL: ${KEYCLOAK_URL:?Missing env KEYCLOAK_URL}
+      VITE_KEYCLOAK_REALM: Big-data-server-users
+      VITE_BACKEND_URL: ${BACKEND_URL:?Missing env BACKEND_URL}
     ports:
       - "${FRONTEND_PORT:?Missing env FRONTEND_PORT}:80"
     networks:
@@ -79,7 +108,8 @@ services:
 
 
 volumes:
-  postgres_data:
+  keycloak_postgres_data:
+  backend_postgres_data:
 
 networks:
   keycloak:

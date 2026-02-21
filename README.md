@@ -9,6 +9,7 @@
 - [Usage](#usage)
   - [Run in Dev](#run-in-dev)
   - [Run in Production](#run-in-production)
+  - [Set up keycloak](#set-up-keycloak)
 - [Architecture](#architecture)
   - [Register](#register)
   - [Login](#login)
@@ -30,7 +31,8 @@
 - frontend port: 10000
 - backend port: 18080
 - keycloak port: 19090
-- postgresql port: 15432
+- postgresql keycloak port: 15432
+- postgresql backend port: 15433
 
 ### Run in Production
     ```bash
@@ -38,6 +40,8 @@
          POSTGRES_KEYCLOAK_PASSWORD=keycloak \
          KEYCLOAK_ADMIN=keycloak \
          KEYCLOAK_ADMIN_PASSWORD=keycloak \
+         POSTGRES_BACKEND_USER=admin \
+         POSTGRES_BACKEND_PASSWORD=admin \
          KEYCLOAK_URL="http://localhost:9090" \
          KEYCLOAK_PORT=9090 \
          BACKEND_URL="http://localhost:8080" \
@@ -51,6 +55,11 @@
 - keycloak url: KEYCLOAK_URL
 - keycloak port: KEYCLOAK_PORT
 - postgresql port: NONE
+
+### Set up keycloak
+1. Add new realm with name ```Big-data-server-users```.
+2. Allow self registration and email as username.
+3. Add Client ```frontend``` for Vue.js.
 
 
 
