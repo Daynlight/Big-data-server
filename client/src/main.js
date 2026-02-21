@@ -6,12 +6,18 @@ import keycloak from './keycloak'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
-keycloak.init({
-  onLoad: 'check-sso',
-  checkLoginIframe: false
-})
+const startApp = async () => {
+  try {
+    await keycloak.init()
 
-const app = createApp(App)
-app.config.globalProperties.$keycloak = keycloak
-app.use(router)
-app.mount('#app')
+    const app = createApp(App)
+
+    app.use(router)
+    app.mount('#app')
+
+  } catch (err) {
+    console.error("Keycloak init failed:", err)
+  }
+}
+
+startApp()
