@@ -18,9 +18,8 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
     restart: unless-stopped
-    command: start
+    command: start-dev
     environment:
-      KC_PROXY: edge
       KC_DB: postgres
       KC_DB_URL_HOST: keycloak-postgres
       KC_DB_URL_DATABASE: keycloak
