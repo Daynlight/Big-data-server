@@ -9,6 +9,7 @@
 - [Usage](#usage)
   - [Run in Dev](#run-in-dev)
   - [Run in Production](#run-in-production)
+  - [Set up keycloak](#set-up-keycloak)
 - [Architecture](#architecture)
   - [Register](#register)
   - [Login](#login)
@@ -54,6 +55,11 @@
 - keycloak url: KEYCLOAK_URL
 - keycloak port: KEYCLOAK_PORT
 - postgresql port: NONE
+
+### Set up keycloak
+1. Add new realm with name ```Big-data-server-users```.
+2. Allow self registration and email as username.
+3. Add Client ```frontend``` for Vue.js.
 
 
 
