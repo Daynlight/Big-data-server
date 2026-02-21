@@ -5,10 +5,7 @@ import keycloak from '../keycloak'
 
 <template>
   <Navbar />
-
-  <h2>Username:</h2>
-  <h3>{{ keycloak?.state.username }}</h3>
-
+  
   <h2>Token:</h2>
   <pre>{{ keycloak?.state.token }}</pre>
 </template>
