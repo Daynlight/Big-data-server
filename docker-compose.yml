@@ -99,6 +99,7 @@ services:
         VITE_KEYCLOAK_URL: ${KEYCLOAK_URL}
         VITE_BACKEND_PROTOCOL: ${BACKEND_PROTOCOL}
         VITE_KEYCLOAK_PROTOCOL: ${KEYCLOAK_PROTOCOL}
+        VITE_KEYCLOAK_REALM: Big-data-server-users
     restart: unless-stopped
     environment:
       PORT: 80
