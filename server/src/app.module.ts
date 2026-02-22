@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { FileService } from './files.service';
 import { KeycloakStrategy } from './keycloak.strategy'
 import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { File } from './database/file.entity'
+import { Files } from './database/files.entity'
 import { FileChunk } from './database/file-chunk.entity'
 import { Users } from './database/users.entity'
 
@@ -20,9 +20,9 @@ import { Users } from './database/users.entity'
       autoLoadEntities: true,
       synchronize: false
     }),
-    TypeOrmModule.forFeature([Users, File, FileChunk])
+    TypeOrmModule.forFeature([Users, Files, FileChunk])
   ],
   controllers: [AppController],
-  providers: [AppService, KeycloakStrategy],
+  providers: [FileService, KeycloakStrategy],
 })
 export class AppModule {}

@@ -11,6 +11,7 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "keycloak-js": "^26.2.3",
+    "pako": "^2.1.0",
     "vue": "^3.5.28",
     "vue-router": "^5.0.3"
   },

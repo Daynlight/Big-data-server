@@ -4,26 +4,20 @@ import Navbar from '../components/Navbar.vue'
 import keycloak from '../scripts/keycloak'
 import requests from '../scripts/requests'
 
-const respond_print = ref(null)
-const sendRequest = async () => {
-  
-  respond_print.value = await requests.getRequest(
-    requests?.backend_server_url,
+const files_list = ref(null)
+const listRequest = async () => {
+  files_list.value = await requests.getRequest(
+    requests?.backend_server_url + "/list",
     {
       Authorization: `Bearer ${keycloak?.state.token}`
     })
 };
+
+listRequest();
 </script>
 
 <template>
   <Navbar />
 
-  <h2>Token:</h2>
-  <pre>{{ keycloak?.state.token }}</pre>
-
-  <button class="btn" @click="sendRequest">
-    Send Request
-  </button>
-
-  <pre>{{ respond_print }}</pre>
+  <pre v-if="files_list">{{ files_list.message }}</pre>
 </template>

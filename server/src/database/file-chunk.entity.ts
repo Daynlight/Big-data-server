@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm'
-import { File } from './file.entity'
+import { Files } from './files.entity'
 
 @Entity()
 export class FileChunk {
@@ -21,7 +21,7 @@ export class FileChunk {
   @Column()
   hash: string
 
-  @ManyToOne(() => File, file => file.chunks, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Files, files => files.chunks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idf' })
   file: File
 }

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
-import { File } from './file.entity'
+import { Files } from './files.entity'
 
 @Entity()
 export class Users {
@@ -9,6 +9,6 @@ export class Users {
   @Column()
   email: string
 
-  @OneToMany(() => File, file => file.user)
-  files: File[]
+  @OneToMany(() => Files, files => files.user)
+  files: Files[]
 }

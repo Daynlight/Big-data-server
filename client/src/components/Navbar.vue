@@ -19,6 +19,9 @@ const username = computed(() => keycloak.state.username)
         <router-link class="nav-link d-inline text-white me-3" to="/">
           Home
         </router-link>
+        <router-link class="nav-link d-inline text-white me-3" to="/new_file">
+          NewFile
+        </router-link>
 
         <router-link
           v-if="!keycloak?.state.authenticated"

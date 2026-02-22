@@ -183,7 +183,7 @@ In future...
 - [ ] Wznawianie uploadu – po przerwaniu transferu da się go kontynuować bez wysyłania wszystkiego od nowa.
 - [ ] Integralność – fragmenty i/lub cały plik są weryfikowane checksumą (np. SHA-256); serwer odrzuca błędne dane.
 - [ ] Pobieranie z wznawianiem – wsparcie dla Range (lub równoważny mechanizm).
-- [ ] Minimalny klient (CLI lub skrypt), który potrafi wykonać upload i wznowienie.
+- [x] Minimalny klient (CLI lub skrypt), który potrafi wykonać upload i wznowienie.
 
 
 
