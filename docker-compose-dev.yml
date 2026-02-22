@@ -100,6 +100,12 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
+      args:
+        VITE_BACKEND_URL: localhost:18080
+        VITE_BACKEND_PROTOCOL: http
+        VITE_KEYCLOAK_URL: auth.daynlight.pl
+        VITE_KEYCLOAK_PROTOCOL: https
+        VITE_KEYCLOAK_REALM: Big-data-server-users
     restart: unless-stopped
     environment:
       PORT: 80
@@ -123,10 +129,10 @@ services:
 
 
 volumes:
-  keycloak_postgres_data:
+  # keycloak_postgres_data:
   backend_postgres_data:
 
 networks:
-  keycloak:
+  # keycloak:
   backend:
   frontend:
