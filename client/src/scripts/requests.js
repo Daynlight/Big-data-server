@@ -1,3 +1,5 @@
+const backend_server_url = import.meta.env.VITE_BACKEND_PROTOCOL + "://" + import.meta.env.VITE_BACKEND_URL
+
 const handleResponse = async (res) => {
   if (!res.ok) {
     const errorText = await res.text()
@@ -43,6 +45,7 @@ const getRequest = async (url, headers = {}) => {
 }
 
 export default {
+  backend_server_url,
   postRequest,
   getRequest
 }

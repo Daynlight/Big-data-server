@@ -9,7 +9,6 @@ export class AppController {
   @UseGuards(AuthGuard('keycloak'))
   @Get()
   getHello(@Req() req) {
-    console.log("hello")
     return {
       message: this.appService.getHello(),
       user: req.user

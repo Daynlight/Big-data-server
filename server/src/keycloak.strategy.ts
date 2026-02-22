@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import * as jwksRsa from 'jwks-rsa'
 
-// [TODO] change to env variables
 @Injectable()
 export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
   constructor() {
@@ -15,10 +14,10 @@ export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
         rateLimit: true,
         jwksRequestsPerMinute: 5,
         jwksUri:
-          'https://auth.daynlight.pl/realms/Big-data-server-users/protocol/openid-connect/certs'
+          `${process.env.KEYCLOAK_PROTOCOL}://${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/certs`
       }),
       audience: 'account',
-      issuer: 'https://auth.daynlight.pl/realms/Big-data-server-users',
+      issuer: `${process.env.KEYCLOAK_PROTOCOL}://${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}`,
       algorithms: ['RS256']
     })
   }
