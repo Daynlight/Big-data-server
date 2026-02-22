@@ -8,9 +8,12 @@ export class AppController {
 
   @UseGuards(AuthGuard('keycloak'))
   @Get()
-  getHello(@Req() req) {
+  async getHello(@Req() req) {
+    console.log("hell")
+    const users = await this.appService.getHello();
+    
     return {
-      message: this.appService.getHello(),
+      message: users,
       user: req.user
     }
   }
