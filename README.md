@@ -44,9 +44,9 @@
          POSTGRES_BACKEND_USER=admin \
          POSTGRES_BACKEND_PASSWORD=admin \
          KEYCLOAK_URL="localhost:9090" \
-         KEYCLOAK_PROTOCOL="http"
+         KEYCLOAK_PROTOCOL="http" \
          KEYCLOAK_PORT=9090 \
-         BACKEND_URL="http://localhost:8080" \
+         BACKEND_URL="localhost:8080" \
          BACKEND_PORT=8080 \
          FRONTEND_PORT=80 \
          BACKEND_PROTOCOL="http" \
