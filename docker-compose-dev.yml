@@ -60,6 +60,7 @@ services:
       - "15433:5432"
     volumes:
       - backend_postgres_data:/var/lib/postgresql/data
+      - ./backend.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - backend
 
@@ -84,8 +85,6 @@ services:
         condition: service_healthy
     networks:
       - backend
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./server:/server
 
