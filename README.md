@@ -2,6 +2,7 @@
 
 # 🥮 Big Data Server 🥮
 
+[![wakatime](https://wakatime.com/badge/user/233b40bd-5512-4e3e-9573-916f7b4127c3/project/2f8de718-e62f-4959-8961-0f7dbfe87e89.svg)](https://wakatime.com/badge/user/233b40bd-5512-4e3e-9573-916f7b4127c3/project/2f8de718-e62f-4959-8961-0f7dbfe87e89)
 </div>
 
 
