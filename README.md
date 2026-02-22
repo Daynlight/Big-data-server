@@ -2,6 +2,7 @@
 
 # 🥮 Big Data Server 🥮
 
+[![wakatime](https://wakatime.com/badge/user/233b40bd-5512-4e3e-9573-916f7b4127c3/project/2f8de718-e62f-4959-8961-0f7dbfe87e89.svg)](https://wakatime.com/badge/user/233b40bd-5512-4e3e-9573-916f7b4127c3/project/2f8de718-e62f-4959-8961-0f7dbfe87e89)
 </div>
 
 
@@ -42,11 +43,13 @@
          KEYCLOAK_ADMIN_PASSWORD=keycloak \
          POSTGRES_BACKEND_USER=admin \
          POSTGRES_BACKEND_PASSWORD=admin \
-         KEYCLOAK_URL="http://localhost:9090" \
+         KEYCLOAK_URL="localhost:9090" \
+         KEYCLOAK_PROTOCOL="http"
          KEYCLOAK_PORT=9090 \
          BACKEND_URL="http://localhost:8080" \
          BACKEND_PORT=8080 \
          FRONTEND_PORT=80 \
+         BACKEND_PROTOCOL="http" \
          docker compose -f docker-compose.yml --project-name big-data-server up --build -d
     ```
 - frontend port: FRONTEND_PORT

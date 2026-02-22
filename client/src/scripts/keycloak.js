@@ -4,8 +4,8 @@ import Keycloak from "keycloak-js"
 let refreshInterval = null
 
 const keycloak = new Keycloak({
-  url: "https://auth.daynlight.pl",
-  realm: "Big-data-server-users",
+  url:  import.meta.env.VITE_KEYCLOAK_PROTOCOL + "://" + import.meta.env.VITE_KEYCLOAK_URL,
+  realm: import.meta.env.VITE_KEYCLOAK_REALM,
   clientId: "frontend"
 })
 
