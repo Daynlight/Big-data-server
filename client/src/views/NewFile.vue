@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import pako from 'pako';
 import Navbar from '../components/Navbar.vue'
 import keycloak from '../scripts/keycloak'
 import requests from '../scripts/requests'
@@ -23,7 +24,7 @@ const createRequest = async () => {
       name: name.value,
     })
 
-    
+
 
     router.push("/")
 };
