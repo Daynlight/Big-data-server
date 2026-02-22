@@ -8,7 +8,7 @@ const respond_print = ref(null)
 const sendRequest = async () => {
   
   respond_print.value = await requests.getRequest(
-    'http://localhost:18080',
+    'https://big-data-server-api',
     {
       Authorization: `Bearer ${keycloak?.state.token}`
     })
