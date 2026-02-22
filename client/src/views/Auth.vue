@@ -1,6 +1,6 @@
 <script setup>
 import Navbar from '../components/Navbar.vue'
-import keycloak from "../keycloak"
+import keycloak from "../scripts/keycloak"
 </script>
 
 <template>
