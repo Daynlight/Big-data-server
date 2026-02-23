@@ -37,5 +37,16 @@ export class AppController {
       message: res,
       user: req.user
     }
+  };
+
+  @UseGuards(AuthGuard('keycloak'))
+  @Post("/verify_chunk")
+  async verifyChunkData(@Req() req, @Body() body: any){
+    const res = await this.fileService.verifyChunkData(req.user.email, body.name, body.chunkid, body.hash)
+    
+    return {
+      message: res,
+      user: req.user
+    }
   }
 }

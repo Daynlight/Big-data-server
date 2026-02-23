@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Files } from './database/files.entity';
 import { Users } from './database/users.entity'
 import { FileChunk } from './database/file-chunk.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class FileService {
@@ -36,49 +37,108 @@ export class FileService {
     let file = await this.filesRepository.findOne({
       where: { name: name, user: user },
     });
-    if(!file){
-      return -1;
-    }
     
     return file;   
   };
 
+  async getChunk(file, chunkid){
+    const chunk = await this.fileChunkRepository.findOne({
+      where: { idfc: chunkid, file: file },
+    });
+
+    return chunk;
+  }
+
   async createFile(email: string, name: string, chunks: number) {
     const user = await this.getUser(email);
 
-    let file = await this.filesRepository.findOne({
-      where: { name: name, user: user },
-    });
-
-    if(file)
-      return -1
-    
-    file = this.filesRepository.create({
-      name,
-      chunks,
-      user,
-    });
+    let file = await this.getFile(name, user);
+    if(file){
+      file.name = name;
+      file.chunks = chunks;
+      console.log("file updated");
+    }
+    else{
+      file = this.filesRepository.create({
+        name: name,
+        chunks: chunks,
+        user: user,
+      });
+      console.log("file created");
+    };
 
     await this.filesRepository.save(file);
+
+    await this.fileChunkRepository.delete({
+      file: file,
+      idfc: MoreThan(chunks)
+    });
+
     return 0
   };
 
+  async generateHash(data: Buffer): Promise<string> {
+    const hash = createHash('sha256');
+    hash.update(data);
+    return hash.digest('hex');
+  }
+
   async createUploadChunk(email: string, name: string, chunkid: number, hash: string, data: Buffer){
+    const verify_hash = await this.generateHash(data);
+    if(verify_hash != hash){
+      console.log("hashes doesn't match");
+      return -1;
+    };
+    
     const user = await this.getUser(email);
     const file = await this.getFile(name, user);
 
-    if(file == -1) return
+    if(!file) return
 
-    const file_chunk = this.fileChunkRepository.create({
-      idfc: chunkid,
-      idf: file.idf,
-      file: file,
-      hash: hash,
-      data: data
-    });
+    const existing = await this.getChunk(file, chunkid);
 
-    await this.fileChunkRepository.save(file_chunk);
+    if (existing) {
+      existing.hash = hash;
+      existing.data = data;
+      existing.file = file;
 
+      console.log("chunk updated")
+
+      await this.fileChunkRepository.save(existing);
+    } else {
+      const file_chunk = this.fileChunkRepository.create({
+        idfc: chunkid,
+        idf: file.idf,
+        file,
+        hash,
+        data,
+      });
+
+      console.log("chunk created")
+
+      await this.fileChunkRepository.save(file_chunk);
+    };
+    
+    return 0;
+  }
+
+  async verifyChunkData(email: string, name: string, chunkid: number, hash: string){
+    const user = await this.getUser(email);
+    const file = await this.getFile(name, user);
+
+    const chunk = await this.getChunk(file, chunkid);
+    
+    if(!chunk){
+      console.log("chunk doesn't exists");
+      return -1;
+    }
+
+    if(chunk.hash != hash){
+      console.log("chunk hash are different");
+      return -1;
+    }
+      
+    console.log("chunks are the same");
     return 0;
   }
 
