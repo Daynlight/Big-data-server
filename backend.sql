@@ -7,6 +7,7 @@ Create Table Files(
   idf SERIAL PRIMARY KEY NOT NULL,
   idu INT NOT NULL,
   name VARCHAR(255),
+  chunks int,
 
   FOREIGN KEY (idu) REFERENCES Users(idu) ON DELETE CASCADE
 );
@@ -14,7 +15,7 @@ Create Table Files(
 Create Table FileChunk(
   idfc INT NOT NULL,
   idf INT NOT NULL,
-  data VARCHAR(255) NOT NULL,
+  data BYTEA NOT NULL,
   hash VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (idfc, idf),

@@ -7,21 +7,21 @@ import {
 } from 'typeorm'
 import { Files } from './files.entity'
 
-@Entity()
+@Entity("filechunk")
 export class FileChunk {
-  @PrimaryColumn()
+  @PrimaryColumn({ name: "idfc" })
   idfc: number
 
-  @PrimaryColumn()
+  @PrimaryColumn({ name: "idf" })
   idf: number
 
-  @Column()
-  data: string
+  @Column({ name: "data", type: "bytea" })
+  data: Buffer
 
-  @Column()
+  @Column({ name: "hash" })
   hash: string
 
   @ManyToOne(() => Files, files => files.chunks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idf' })
-  file: File
+  file: Files
 }

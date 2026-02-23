@@ -17,10 +17,13 @@ export class Files {
   @Column({ name: "name" })
   name: string
 
+  @Column({ name: "chunks", nullable: true})
+  chunks: number
+
   @ManyToOne(() => Users, user => user.files, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idu' })
   user: Users;
 
   @OneToMany(() => FileChunk, chunk => chunk.file)
-  chunks: FileChunk[]
+  file_chunk: FileChunk[]
 }

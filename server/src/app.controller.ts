@@ -9,11 +9,10 @@ export class AppController {
   @UseGuards(AuthGuard('keycloak'))
   @Get("/list")
   async listFiles(@Req() req) {
-    console.log("hell")
-    const users = await this.fileService.listFiles();
+    const files = await this.fileService.listFiles();
 
     return {
-      message: users,
+      message: files,
       user: req.user
     }
   }
@@ -21,9 +20,21 @@ export class AppController {
   @UseGuards(AuthGuard('keycloak'))
   @Post("/create")
   async createFile(@Req() req, @Body() body: any){
-    await this.fileService.createFile(body.name, req.user.email)
+    const res = await this.fileService.createFile(req.user.email, body.name, body.chunks)
+    
     return {
-      message: "Success",
+      message: res,
+      user: req.user
+    }
+  }
+
+  @UseGuards(AuthGuard('keycloak'))
+  @Post("/upload_chunk")
+  async createUploadChunk(@Req() req, @Body() body: any){
+    const res = await this.fileService.createUploadChunk(req.user.email, body.name, body.chunkid, body.hash, body.data)
+    
+    return {
+      message: res,
       user: req.user
     }
   }
