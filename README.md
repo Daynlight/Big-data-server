@@ -12,10 +12,13 @@
   - [Run in Production](#run-in-production)
   - [Set up keycloak](#set-up-keycloak)
 - [Architecture](#architecture)
+- [Backend apis](#backend-apis)
+- [Application Actions](#application-actions)
   - [Register](#register)
   - [Login](#login)
   - [Upload](#upload)
   - [Download](#download)
+  - [List](#list)
   - [Update](#update)
   - [Remove](#remove)
   - [Search](#search)
@@ -67,104 +70,69 @@
 
 
 ## Architecture
+- Project uses ```docker``` and ```docker-compose``` with two modes **production** and **development**.
+- In **development** all links and ports are ```hardcoded``` and uses ```Dockerfile.dev``` for build. Also allows hot reload when project changes and runs containers in **dev** mode.
+- In **production** all links and ports are passed via ```env``` and uses ```Dockerfile``` for build. Runs containers in **production** mode.
+- For **user authentication** project uses ```keycloak```.
+- ```keyclaok``` is separated service independent from ```backend``` and ```frontend```.
+- **development** and **production** are separated. One issue is that they uses the same ```keycloak``` server. Because of I can't send request to ```keycloak``` from ```backend```. In future I will fix it.
+- ```Backend``` have postgresql database where we store ```users.email``` obtained from ```keycloak```, ```files``` and ```file-chunks```.
+- ```Docker``` is automatically loading ```backend.sql``` on first initialization of container.
+- For ```Backend``` we use ```nest.js```.
+- For ```Frontend``` we use ```vue.js``` with ```routers``` to store it in web-browser.
+- ```Backend``` uses ```typeorm``` for connection to database.
+- ```JWT token``` from ```keycloak``` is verified every time when api call to backend.
+- In database ```chunks``` are ```compressed```.
+- Client for compression uses ```pako```.
+- Data are send as **Buffer**.
+
+
+
+## Backend apis
+- ```/create``` - creates file for user.
+- ```/verify_chunk``` - verify chunk stored in database and current one.
+- ```/upload_chunk``` - uploading/updating chunk in database.
+- ```/list``` - list all files in page.
+- ```/download_chunk``` - downloads data chunk.
+
+
+
+## Application Actions 
 ### Register
-- User send api request to backend:
-  - Req:
-    - username.
-    - hashed password.
-    * Backend create user in default realm.
-  - Res:
-    - Registration status.
+- User keycloak register form and jwt token.
 
 ### Login
-- User send api request with login and hashed password to Keycloak and obtain JWT.
-- Api is send via cloudflare tunnel that provides https and TLS.
-- On server every request is validate with JWT token.
-- Default user is in User Realm.
+- Uses keycloak login form and jwt token.
 
 ### Upload
-- Client send request to start uploading file with:
-  - Req:
-    - JWT token.
-    - Filename.
-    - Chunk size.
-    - Public/Private.
-    * Backend creates filename for user. 
-  - Res:
-    - File state (ready for upload, already exist).
-    - Chunk size.
-    - Token for upload that is connected with specific file and user.
-
-- Client separate file to chunks base on chunk size.
-- For each chunk base on chunk size:
-  - Create gzip for chunk.
-  - Client create gzip hash.
-
-  - Send request to validate chunk:
-    - Req:
-      - JWT
-      - upload token.
-      - chunk id.
-      - hash.
-    - Res:
-      - Chunk state.
-
-  - if Chunk state not the same -> Send data with:
-    - Req:
-      - JWT.
-      - upload token.
-      - gzip.
-      - chunk id.
-      * Backend save gzip, chunk id, gzip hash.
-    - Res:
-      - gzip hash.
-    
-    - Client repeat loop again. 
-
-  - if Chunk state the same goes to next one.
-
-- Client send request with end of upload:
-  - Req:
-    - JWT.
-    - Upload token.
-    * Remove upload token and save file state in db.
-  - Res:
-    - Upload state.  
+- Client goes to ```NewFile``` tab and fills data.
+- Client compress data via gzip.
+- Client split file into chunks 10mb.
+- Client creates sha-256 hashes for each chunk.
+- Client send api request(```create```) to backend with [```filename```, ```chunks number```].
+- Client send api request(```verify_chunk```) to backend with [```filename```, ```chunkid```, ```hash```] to verify stored data.
+- If hashes are the same than skip.
+- If doesn't exist or hashes are different than update.
+- Client send api request(```upload_chunk```) to backend with [```filename```, ```chunkid```, ```hash```, ```data```].
+- Backend ```generate hash for received data``` and compare it with obtained ```hash```.
+- If hashes doesn't match than ```return -1``` and Client sends it again up to **10 times**.
+- Backend stores it to postgresql via ```typeorm```.
+- After successful upload client goes to **Home**. 
 
 ### Download
-- Client send request to start downloading.
-  - Req:
-    - JWT.
-    - Username (Owner).
-    - Filename.
-  - Res:
-    - File state (exist, not exist).
-    - Chunk size.
-    - Token for downloading that is connected with specific user, file and user that download content.
+- Client clicks on **Download** for file.
+- Client send api request(```download_chunk```) to backend with [```idf```, ```chunkid```].
+- **Generates hash for obtained data** and **compare** it with **obtained hash**.
+- If hashes are different than retry up to **10 times**.
+- Client **stores data chunks**.
+- Client **merge chunks**.
+- Client ```decompress``` data.
+- Client saves file into **download folder**.
 
-- For each chunk base on chunk size:
-  - Send request for chunk:
-    - Req:
-      - JWT.
-      - Token to download.
-      - Chunk id.
-    - Res:
-      - gzip data.
-      - gzip hash.
-  
-  - if hashes are the same:
-    - Un zip.
-    - Go to next chunk. 
-  - if hashes are not the same:
-    - Repeat download.
-
-- Client send end of download:
-  - Req:
-    - JWT.
-    - Download token.
-    * Backend removes download token.
-  - Res:
-    - Download state.
+### List
+- Client loads **Home** page.
+- Client automatically send api request(```list```) to backend with [```page```].
+- Client gets page and render it in **Home** page.
 
 ### Update
 In future...
@@ -178,13 +146,8 @@ In future...
 
 
 ## TODO:
-- [ ] Zbuduj i uruchom usługę WWW (API + prosty klient), która umożliwia wysyłanie i pobieranie dużych plików w sposób odporny na problemy sieciowe (zerwane połączenia, ponowienia żądań).
-- [x] Upload w częściach (chunked upload) – klient dzieli plik na fragmenty i wysyła je osobno.
-- [x] Wznawianie uploadu – po przerwaniu transferu da się go kontynuować bez wysyłania wszystkiego od nowa.
-- [x] Integralność – fragmenty i/lub cały plik są weryfikowane checksumą (np. SHA-256); serwer odrzuca błędne dane.
-- [x] Pobieranie 
-- [ ] Pobieranie z wznawianiem – wsparcie dla Range (lub równoważny mechanizm).
-- [x] Minimalny klient (CLI lub skrypt), który potrafi wykonać upload i wznowienie.
+- [ ] Zapis ostatniego pliku i cache danych.
+- [ ] keycloak dev mode.
 
 
 

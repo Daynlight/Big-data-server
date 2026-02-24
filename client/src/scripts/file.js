@@ -21,7 +21,6 @@ const decompressFile = async (base64OrUint8) => {
 
   let uint8;
 
-  // If it's a Uint8Array that actually contains base64 text
   if (base64OrUint8 instanceof Uint8Array) {
     const text = new TextDecoder().decode(base64OrUint8);
     const binaryString = atob(text);
@@ -65,8 +64,6 @@ const generateHash = async (data) => {
 };
 
 async function generateHashFromBufferObject(bufferObject) {
-  // bufferObject = { type: "Buffer", data: [...] }
-
   const uint8Array = new Uint8Array(bufferObject.data);
 
   const hashBuffer = await crypto.subtle.digest("SHA-256", uint8Array);

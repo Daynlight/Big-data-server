@@ -7,6 +7,7 @@ import file from '../scripts/file'
 
 const files_list = ref(null)
 let respond = ref(null);
+let res_chunks = [];
 
 const listRequest = async () => {
   files_list.value = await requests.postRequest(
@@ -38,7 +39,6 @@ const mergeChunks = (chunks) => {
     return new Uint8Array(chunk);
   });
 
-  // Calculate total length
   const totalLength = buffers.reduce((acc, buf) => acc + buf.length, 0);
 
   const merged = new Uint8Array(totalLength);
@@ -60,7 +60,7 @@ const saveToDisk = (fileData, filename = "downloaded_file") => {
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = filename; // default name
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
 
@@ -71,20 +71,25 @@ const saveToDisk = (fileData, filename = "downloaded_file") => {
 const download = async (idf) => {
   const file_from_list = files_list.value.message.find(f => f.idf === idf);
   const chunks = file_from_list.chunks
-  let res_chunks = []
 
   for(let i = 0; i < chunks; i++){
     let temp = await downloadRequest(idf, i);
     if(!temp) {
       return;
     };
-    res_chunks[i] = temp.data;
+    res_chunks[i] = temp;
   };
 
-  let merged = mergeChunks(res_chunks)
+  let merge_chunks = [];
+  for(let i = 0; i < chunks; i++){
+    merge_chunks[i] = res_chunks[i].data;
+  }
+
+  let merged = mergeChunks(merge_chunks)
   let decompressed = await file?.decompressFile(merged);
 
   saveToDisk(decompressed, file_from_list.name)
+  // res_chunks = [];
 };
 
 const downloadRequest = async (idf, chunkid, iter = 10) => {
