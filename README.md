@@ -182,6 +182,7 @@ In future...
 - [x] Upload w częściach (chunked upload) – klient dzieli plik na fragmenty i wysyła je osobno.
 - [x] Wznawianie uploadu – po przerwaniu transferu da się go kontynuować bez wysyłania wszystkiego od nowa.
 - [x] Integralność – fragmenty i/lub cały plik są weryfikowane checksumą (np. SHA-256); serwer odrzuca błędne dane.
+- [x] Pobieranie 
 - [ ] Pobieranie z wznawianiem – wsparcie dla Range (lub równoważny mechanizm).
 - [x] Minimalny klient (CLI lub skrypt), który potrafi wykonać upload i wznowienie.
 
