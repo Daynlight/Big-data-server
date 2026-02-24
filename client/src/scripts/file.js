@@ -16,13 +16,36 @@ const compressFile = async (file) => {
   return btoa(binary);
 };
 
+const decompressFile = async (base64OrUint8) => {
+  if (!base64OrUint8) return;
+
+  let uint8;
+
+  // If it's a Uint8Array that actually contains base64 text
+  if (base64OrUint8 instanceof Uint8Array) {
+    const text = new TextDecoder().decode(base64OrUint8);
+    const binaryString = atob(text);
+
+    uint8 = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      uint8[i] = binaryString.charCodeAt(i);
+    }
+  } else {
+    return;
+  }
+
+  const decompressed = pako.ungzip(uint8);
+
+  return new TextDecoder().decode(decompressed);
+};
+
 const splitFile = (file) => {
   if(!file) return;
 
   let Chunks = [];
 
-  for (let i = 0; i < file.length; i += 1024**1 * 1)
-    Chunks.push(file.substring(i, i + 1024**1 * 1))
+  for (let i = 0; i < file.length; i += 1024**2 * 10)
+    Chunks.push(file.substring(i, i + 1024**2 * 10))
 
   return Chunks;
 };
@@ -41,8 +64,26 @@ const generateHash = async (data) => {
   return hash;
 };
 
+async function generateHashFromBufferObject(bufferObject) {
+  // bufferObject = { type: "Buffer", data: [...] }
+
+  const uint8Array = new Uint8Array(bufferObject.data);
+
+  const hashBuffer = await crypto.subtle.digest("SHA-256", uint8Array);
+
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  const hashHex = hashArray
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  return hashHex;
+}
+
 export default {
   compressFile,
+  decompressFile,
   splitFile,
-  generateHash
+  generateHash,
+  generateHashFromBufferObject
 }

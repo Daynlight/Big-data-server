@@ -8,13 +8,13 @@ async function bootstrap() {
 
   app.use(
   express.json({
-    limit: '10mb',
+    limit: '11mb',
     }),
   );
 
   app.use(
     express.urlencoded({
-      limit: '10mb',
+      limit: '11mb',
       extended: true,
     }),
   );

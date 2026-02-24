@@ -7,9 +7,9 @@ export class AppController {
   constructor(private readonly fileService: FileService) {}
 
   @UseGuards(AuthGuard('keycloak'))
-  @Get("/list")
-  async listFiles(@Req() req) {
-    const files = await this.fileService.listFiles();
+  @Post("/list")
+  async listFiles(@Req() req, @Body() body: any) {
+    const files = await this.fileService.listFiles(body.page);
 
     return {
       message: files,
@@ -43,6 +43,17 @@ export class AppController {
   @Post("/verify_chunk")
   async verifyChunkData(@Req() req, @Body() body: any){
     const res = await this.fileService.verifyChunkData(req.user.email, body.name, body.chunkid, body.hash)
+    
+    return {
+      message: res,
+      user: req.user
+    }
+  }
+
+  @UseGuards(AuthGuard('keycloak'))
+  @Post("/download_chunk")
+  async downloadChunk(@Req() req, @Body() body: any){
+    const res = await this.fileService.downloadChunk(body.idf, body.chunkid)
     
     return {
       message: res,

@@ -17,9 +17,23 @@ export class FileService {
     private readonly fileChunkRepository: Repository<FileChunk>,
   ) {}
 
-  async findAll() {
-    return await this.filesRepository.find();
-  }
+  async findAllInRange(page: number = 1, limit: number = 10) {
+    const [files] = await this.filesRepository.findAndCount({
+      relations: ['user'],
+      select: {
+        idf: true,
+        name: true,
+        chunks: true,
+        user: {
+          email: true,
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return files;
+  };
 
   async getUser(email: string){
     let user = await this.usersRepository.findOne({
@@ -47,7 +61,7 @@ export class FileService {
     });
 
     return chunk;
-  }
+  };
 
   async createFile(email: string, name: string, chunks: number) {
     const user = await this.getUser(email);
@@ -142,8 +156,22 @@ export class FileService {
     return 0;
   }
 
-  async listFiles() {
-    const files = await this.findAll();
+  async listFiles(page: number) {
+    const files = await this.findAllInRange(page);
     return files;
   }
+
+  async downloadChunk(idf: number, chunkid: number){
+    let file = await this.filesRepository.findOne({
+      where: { idf: idf },
+    });
+    if(!file)
+      return -1;
+
+    const chunk = await this.getChunk(file, chunkid);
+    if(!chunk)
+      return -1;
+
+    return chunk;
+  };
 }
