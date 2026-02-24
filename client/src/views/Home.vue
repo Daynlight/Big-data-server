@@ -88,9 +88,6 @@ const download = async (idf) => {
       };
       res_chunks[i] = temp;
     }
-    else{
-      console.log("chunk skipped");
-    }
   };
 
   let merge_chunks = [];
