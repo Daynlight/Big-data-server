@@ -73,11 +73,24 @@ const download = async (idf) => {
   const chunks = file_from_list.chunks
 
   for(let i = 0; i < chunks; i++){
-    let temp = await downloadRequest(idf, i);
-    if(!temp) {
-      return;
-    };
-    res_chunks[i] = temp;
+    let update = true;
+    
+    if(res_chunks[i]){
+      let res = await verifyDownloadRequest(idf, i, res_chunks[i].hash)
+      if(res == 0)
+        update = false;
+      }
+
+    if(update){
+      let temp = await downloadRequest(idf, i);
+      if(!temp) {
+        return;
+      };
+      res_chunks[i] = temp;
+    }
+    else{
+      console.log("chunk skipped");
+    }
   };
 
   let merge_chunks = [];
@@ -107,6 +120,22 @@ const downloadRequest = async (idf, chunkid, iter = 10) => {
   const compare = await compareHahshes(respond.value.message.data, respond.value.message.hash);
   if(!compare)
     return downloadRequest(idf, chunkid, iter - 1);
+
+  return respond.value.message;
+};
+
+const verifyDownloadRequest = async (idf, chunkid, hash, iter = 10) => {
+  if(iter < 0) return;
+
+  respond.value = await requests.postRequest(
+    requests?.backend_server_url + "/verify_download_chunk",
+    {
+      Authorization: `Bearer ${keycloak?.state.token}`
+    },{
+      idf: idf,
+      chunkid: chunkid,
+      hash: hash
+    })
 
   return respond.value.message;
 };

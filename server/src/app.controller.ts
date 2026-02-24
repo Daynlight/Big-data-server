@@ -60,4 +60,15 @@ export class AppController {
       user: req.user
     }
   }
+
+  @UseGuards(AuthGuard('keycloak'))
+  @Post("/verify_download_chunk")
+  async verifyDownloadChunk(@Req() req, @Body() body: any){
+    const res = await this.fileService.verifyDownloadChunk(body.idf, body.chunkid, body.hash)
+    
+    return {
+      message: res,
+      user: req.user
+    }
+  }
 }

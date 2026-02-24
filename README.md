@@ -121,6 +121,9 @@
 
 ### Download
 - Client clicks on **Download** for file.
+- Client send api request(```verify_download_chunk```) to backend with [```idf```, ```chunkid```, ```hash```] to check if they are different.
+- If they are the same then skip download.
+- Else update them.
 - Client send api request(```download_chunk```) to backend with [```idf```, ```chunkid```].
 - **Generates hash for obtained data** and **compare** it with **obtained hash**.
 - If hashes are different than retry up to **10 times**.
@@ -146,7 +149,6 @@ In future...
 
 
 ## TODO:
-- [ ] Zapis ostatniego pliku i cache danych.
 - [ ] keycloak dev mode.
 
 

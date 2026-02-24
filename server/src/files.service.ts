@@ -156,6 +156,28 @@ export class FileService {
     return 0;
   }
 
+  async verifyDownloadChunk(idf: number, chunkid: number, hash: string){
+    let file = await this.filesRepository.findOne({
+      where: { idf: idf },
+    });
+
+    const chunk = await this.getChunk(file, chunkid);
+    
+    if(!chunk){
+      console.log("chunk doesn't exists");
+      return -1;
+    }
+
+    if(chunk.hash != hash){
+      console.log("chunk hash are different");
+      return -1;
+    }
+      
+    console.log("chunks are the same");
+    return 0;
+  }
+
+
   async listFiles(page: number) {
     const files = await this.findAllInRange(page);
     return files;
