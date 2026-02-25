@@ -150,6 +150,8 @@ In future...
 
 ## TODO:
 - [ ] keycloak dev mode.
+- [ ] JPG error with metadata
+- [ ] Exe error with metadata
 
 
 
