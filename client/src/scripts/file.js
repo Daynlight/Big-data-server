@@ -43,7 +43,7 @@ const decompressFile = async (base64OrUint8) => {
 
   const decompressed = pako.ungzip(uint8);
 
-  return new TextDecoder().decode(decompressed);
+  return decompressed;
 };
 
 
