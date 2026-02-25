@@ -1,13 +1,22 @@
 const backend_server_url = import.meta.env.VITE_BACKEND_PROTOCOL + "://" + import.meta.env.VITE_BACKEND_URL
 
+
+
+
+
+
+
 const handleResponse = async (res) => {
   if (!res.ok) {
-    const errorText = await res.text()
-    throw new Error(errorText || 'Request failed')
-  }
+    const errorText = await res.text();
+    throw new Error(errorText || 'Request failed');
+  };
 
-  return res.json()
-}
+  return res.json();
+};
+
+
+
 
 const postRequest = async (url, headers = {}, body = {}) => {
   try {
@@ -18,14 +27,17 @@ const postRequest = async (url, headers = {}, body = {}) => {
         ...headers
       },
       body: JSON.stringify(body)
-    })
+    });
 
-    return await handleResponse(res)
+    return await handleResponse(res);
   } catch (err) {
-    console.error(err)
-    throw err
-  }
-}
+    console.error(err);
+    throw err;
+  };
+};
+
+
+
 
 const getRequest = async (url, headers = {}) => {
   try {
@@ -35,17 +47,23 @@ const getRequest = async (url, headers = {}) => {
         'Content-Type': 'application/json',
         ...headers
       }
-    })
+    });
 
-    return await handleResponse(res)
+    return await handleResponse(res);
   } catch (err) {
-    console.error(err)
-    throw err
-  }
-}
+    console.error(err);
+    throw err;
+  };
+};
+
+
+
+
+
+
 
 export default {
   backend_server_url,
   postRequest,
   getRequest
-}
+};

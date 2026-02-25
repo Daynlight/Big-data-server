@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Files } from './database/files.entity';
 import { Users } from './database/users.entity'
 import { FileChunk } from './database/file-chunk.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHash } from 'crypto';
 
@@ -27,6 +27,9 @@ export class FileService {
         user: {
           email: true,
         },
+      },
+      order: {
+        idf: 'DESC',
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -85,7 +88,7 @@ export class FileService {
 
     await this.fileChunkRepository.delete({
       file: file,
-      idfc: MoreThan(chunks)
+      idfc: MoreThanOrEqual(chunks)
     });
 
     return 0

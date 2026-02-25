@@ -1,7 +1,10 @@
 <script setup>
-import Navbar from '../components/Navbar.vue'
-import keycloak from "../scripts/keycloak"
+import Navbar from '../components/Navbar.vue';
+import keycloak from "../scripts/keycloak";
 </script>
+
+
+
 
 <template>
   <Navbar />
