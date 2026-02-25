@@ -1,14 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Files } from './files.entity'
+
+
+
 
 @Entity()
 export class Users {
   @PrimaryGeneratedColumn()
-  idu: number
+  idu: number;
 
   @Column()
-  email: string
+  email: string;
 
   @OneToMany(() => Files, files => files.user)
-  files: Files[]
-}
+  files: Files[];
+};

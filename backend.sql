@@ -3,6 +3,9 @@ Create Table Users(
   email VARCHAR(255) NOT NULL
 );
 
+
+
+
 Create Table Files(
   idf SERIAL PRIMARY KEY NOT NULL,
   idu INT NOT NULL,
@@ -11,6 +14,9 @@ Create Table Files(
 
   FOREIGN KEY (idu) REFERENCES Users(idu) ON DELETE CASCADE
 );
+
+
+
 
 Create Table FileChunk(
   idfc INT NOT NULL,

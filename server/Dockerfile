@@ -1,16 +1,3 @@
-# ---------- BUILD ----------
-FROM node:20-alpine AS builder
-
-WORKDIR /server
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-
-# ---------- PRODUCTION ----------
 FROM node:20-alpine
 
 WORKDIR /server
@@ -18,9 +5,11 @@ WORKDIR /server
 COPY package*.json ./
 RUN npm install --omit=dev
 
+COPY . .
+
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /server/dist ./dist
+RUN npm run build
 
 CMD ["node", "dist/main.js"]

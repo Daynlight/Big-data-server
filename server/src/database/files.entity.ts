@@ -1,29 +1,25 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn
-} from 'typeorm'
-import { Users } from './users.entity'
-import { FileChunk } from './file-chunk.entity'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn }from 'typeorm';
+import { Users } from './users.entity';
+import { FileChunk } from './file-chunk.entity';
 
-@Entity()
+
+
+
+@Entity("files")
 export class Files {
   @PrimaryGeneratedColumn({ name:"idf" })
-  idf: number
+  idf: number;
 
   @Column({ name: "name" })
-  name: string
+  name: string;
 
   @Column({ name: "chunks", nullable: true})
-  chunks: number
+  chunks: number;
 
   @ManyToOne(() => Users, user => user.files, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idu' })
   user: Users;
 
   @OneToMany(() => FileChunk, chunk => chunk.file)
-  file_chunk: FileChunk[]
-}
+  file_chunk: FileChunk[];
+};
